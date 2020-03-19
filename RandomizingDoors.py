@@ -1,5 +1,4 @@
 import random
-import array
 import sys
 import tkinter
 
@@ -20,7 +19,12 @@ mnstcntr2 = 0
 mnstcntr3 = 0
 mnstcntr4 = 0
 mnstcntr5 = 0
-score = 0
+defeated = 0
+#doubles
+bnsscore = 0
+mnstscore = 0
+rndscore = 0
+finalscore = 0
 #boolean
 common = True
 #Randomizes door order coming out
@@ -46,37 +50,37 @@ def door_Difficulty():
 #Prompts user for door 1, 2, 3, 4, or 5. Removes first monster from the respective list based on user prompt
 def select_Door(userinput):
     global monsterencounterlist, common
-    if userinput == 1 and len(doorone) > 1:
-        temp = doorone.pop(1)
+    if userinput == 1 and len(doorone) >= 1:
+        temp = doorone.pop(0)
         if common:
             monsterencounterlist[temp] = 0.8
         else:
             monsterencounterlist[temp] = 1.8
         print (temp)
         del temp
-    elif userinput == 2 and len(doortwo) > 1:
-        temp = doortwo.pop(1)
+    elif userinput == 2 and len(doortwo) >= 1:
+        temp = doortwo.pop(0)
         if common:
             monsterencounterlist[temp] = 1.2
         else:
             monsterencounterlist[temp] = 1.5
         print (temp)
         del temp
-    elif userinput == 3 and len(doorthr) > 1:
-        temp = doorthr.pop(1)
+    elif userinput == 3 and len(doorthr) >= 1:
+        temp = doorthr.pop(0)
         monsterencounterlist[temp] = 1.4
         print (temp)
         del temp
-    elif userinput == 4 and len(doorfor) > 1:
-        temp = doorfor.pop(1)
+    elif userinput == 4 and len(doorfor) >= 1:
+        temp = doorfor.pop(0)
         if common:
             monsterencounterlist[temp] = 1.5
         else:
             monsterencounterlist[temp] = 1.2
         print (temp)
         del temp
-    elif userinput == 5 and len(doorfiv) > 1:
-        temp = doorfiv.pop(1)
+    elif userinput == 5 and len(doorfiv) >= 1:
+        temp = doorfiv.pop(0)
         if common:
             monsterencounterlist[temp] = 1.8
         else:
@@ -112,9 +116,9 @@ def round_Counter(counter):
     if counter == 1:
         round_One()
     elif counter == 50:
-        print ("Final Round")
+        end_Encounter(counter)
     else:
-        next_Round()
+        next_Round(counter)
 #Round one. Keeps track of arrows, monsters etc
 def round_One():
     #GUI
@@ -164,7 +168,7 @@ def round_One():
     mnstcntrlbl4.grid(column = 4, row = 3)
     mnstcntrlbl5 = tkinter.Label(window, text = mnstcntr5)
     mnstcntrlbl5.grid(column = 5, row = 3)
-    def dcrmnt_Arrow():
+    def dcrmnt_Arrow(idx):
         global mnstcntr1, mnstcntr2, mnstcntr3, mnstcntr4, mnstcntr5
         if idx == 1 and mnstcntr1 > 0:
             mnstcntr1 -= 1
@@ -189,18 +193,53 @@ def round_One():
     bt5Dwn = tkinter.Button(window, height=50, width=50, image = down, command = lambda idx = 5: dcrmnt_Arrow(idx)).grid (column = 5, row = 4)
     #Row 5 Exit/Submit. Exits the system or submits counters
     def exit():
-        exitbtn.config(command = window.destroy)
         sys.exit('End')
+        window.destroy()
     exitbtn = tkinter.Button(window, text = "Exit", command = exit)
     exitbtn.grid (column = 1, row = 5)
     def submit():
+        global bnsscore
+        opendoor1_5 = mnstcntr1 + mnstcntr5
+        if (opendoor1_5 == 1 or opendoor1_5 == 9):
+            bnsscore = bnsscore + 1.2
+        elif (opendoor1_5 == 2 or opendoor1_5 == 8):
+            bnsscore = bnsscore + 1.8
+        elif (opendoor1_5 == 3):
+            bnsscore = bnsscore + 2.4
+        elif (opendoor1_5 == 4):
+            bnsscore = bnsscore + 3.0
+        elif (opendoor1_5 == 5):
+            bnsscore = bnsscore + 3.6
+        elif (opendoor1_5 == 6):
+            bnsscore = bnsscore + 4.4
+        elif (opendoor1_5 == 7):
+            bnsscore = bnsscore + 2.4
+        elif (opendoor1_5 == 10):
+            bnsscore = bnsscore + 1.0
+        opendoor2_4 = mnstcntr2 + mnstcntr4
+        if (opendoor2_4 == 1):
+            bnsscore = bnsscore + 1.1
+        elif (opendoor2_4 == 2 or opendoor2_4 == 8):
+            bnsscore = bnsscore + 1.8
+        elif (opendoor2_4 == 3 or opendoor2_4 == 7):
+            bnsscore = bnsscore + 2.6
+        elif (opendoor2_4 == 4 or opendoor2_4 == 6):
+            bnsscore = bnsscore + 3.2
+        elif (opendoor2_4 == 5):
+            bnsscore = bnsscore + 4.4
+        if (mnstcntr3 == 1):
+            bnsscore = bnsscore + 1.6
+        elif (mnstcntr3 == 2):
+            bnsscore = bnsscore + 2.6
+        elif (mnstcntr3 == 3):
+            bnsscore = bnsscore + 3.2
         monsters_Entered(mnstcntr1, mnstcntr2, mnstcntr3, mnstcntr4, mnstcntr5)
-        sbmtbtn.config(command = window.destroy)
+        window.destroy()
     sbmtbtn = tkinter.Button(window, text = "Submit", command = submit)
     sbmtbtn.grid (column = 5, row = 5)
         
     window.mainloop() #Calls Main GUI
-def next_Round():
+def next_Round(rnd):
     zero = 0
     one = 1
     def show_Number(idx):
@@ -265,26 +304,32 @@ def next_Round():
             bt4.configure(text = zero)
             bt5.configure(text = zero)
     def exit():
-        print ("End of Encounter")
+        end_Encounter(rnd)
+        window.destroy()
     def submit():
         if bt1.cget('text') == one:
             select_Door(1)
-            sbmtbtn.configure(command = window.destroy)
+            encntr.configure(text = monsterencounterlist)
+            window.destroy()
         elif bt2.cget('text') == one:
             select_Door(2)
-            sbmtbtn.configure(command = window.destroy)
+            encntr.configure(text = monsterencounterlist)
+            window.destroy()
         elif bt3.cget('text') == one:
             select_Door(3)
-            sbmtbtn.configure(command = window.destroy)
+            encntr.configure(text = monsterencounterlist)
+            window.destroy()
         elif bt4.cget('text') == one:
             select_Door(4)
-            sbmtbtn.configure(command = window.destroy)
+            encntr.configure(text = monsterencounterlist)
+            window.destroy()
         elif bt5.cget('text') == one:
             select_Door(5)
-            sbmtbtn.configure(command = window.destroy)
+            encntr.configure(text = monsterencounterlist)
+            window.destroy()
         else:
             select_Door(6)
-            sbmtbtn.configure(command = window.destroy)   
+            window.destroy()   
     #GUI
     window = tkinter.Tk()
     window.title("GUI")
@@ -319,70 +364,102 @@ def next_Round():
     cnt5 = tkinter.Label(window, text = rmn5).grid(column = 5, row = 3)
     #Row 4 Monster in Encounter List w/ Submit
     extbtn = tkinter.Button(window, text = "End", command = exit).grid (column = 1, row = 4)
-    encntr = tkinter.Label(window, text = monsterencounterlist).grid (column = 3, row = 4)
+    encntr = tkinter.Label(window, text = monsterencounterlist)
+    encntr.grid (column = 3, row = 4)
     sbmtbtn = tkinter.Button(window, text = "Submit", command = submit)
     sbmtbtn.grid (column = 5, row = 4)
     window.mainloop() #Calls Main GUI
 def defeated_Enemies():
-    defeated = 0
-    def dft_Count():
+    #GUI
+    window1 = tkinter.Tk()
+    window1.title("GUI")
+    header1 = tkinter.Label(window1, text = "How many monsters were defeated?").grid(column = 3, row = 0)
+    #Row 1 Monster in Encounter List
+    encntr1 = tkinter.Label(window1, text = monsterencounterlist).grid (column = 3, row = 1)
+    #Row 2 User Input Box
+    entrybox1 = tkinter.Entry(window1)
+    entrybox1.grid(column = 3, row = 2)
+    #Row 3 End Encount & Submit
+    extbtn1 = tkinter.Button(window1, text = "End", command = window1.destroy).grid (column = 1, row = 3)
+    def submit1():
+        global defeated
+        defeated = int(entrybox1.get())
         #GUI
-        window = tkinter.Tk()
-        window.title("GUI")
-        header = tkinter.Label(window, text = "How many monsters were defeated?").grid(column = 3, row = 0)
+        window2 = tkinter.Tk()
+        window2.title("GUI")
+        header2 = tkinter.Label(window2, text = "Which monster in the list was defeated?").grid(column = 3, row = 0)
         #Row 1 Monster in Encounter List
-        encntr = tkinter.Label(window, text = monsterencounterlist).grid (column = 3, row = 1)
+        encntr2 = tkinter.Label(window2, text = monsterencounterlist)
+        encntr2.grid (column = 3, row = 1)
         #Row 2 User Input Box
-        entrybox1 = tkinter.Entry(window)
-        entrybox1.grid(column = 3, row = 2)
-        def submit():
-            defeated = int(entrybox1.get())
-            sbmtbtn.configure(command = window.destroy)
-            if defeated > 0:
-                rmv_Creature(defeated)
-        #Row 3 End Encount & Submit
-        extbtn = tkinter.Button(window, text = "End", command = window.destroy).grid (column = 1, row = 3)
-        sbmtbtn = tkinter.Button(window, text = "Submit", command = submit)
-        sbmtbtn.grid (column = 5, row = 3)
-        window.mainloop() #Calls Main GUI
-    def rmv_Creature(x):   
-        #GUI
-        window = tkinter.Tk()
-        window.title("GUI")
-        header = tkinter.Label(window, text = "Which monster in the list was defeated?").grid(column = 3, row = 0)
-        #Row 1 Monster in Encounter List
-        encntr = tkinter.Label(window, text = monsterencounterlist).grid (column = 3, row = 1)
-        #Row 2 User Input Box
-        entrybox2 = tkinter.Entry(window)
+        entrybox2 = tkinter.Entry(window2)
         entrybox2.grid(column = 3, row = 2)
-        def exit():
-            extbtn.configure(command = window.destroy)
-            dft_Count()
-        def submit(y):
-            global score, monsterencounterlist
-            while y > 0:
+        def submit2():
+            global defeated, mnstscore, monsterencounterlist
+            if defeated > 1:
                 tempscore = monsterencounterlist.pop(entrybox2.get())
                 if tempscore > 0:
-                    score = score + tempscore
+                    mnstscore = mnstscore + tempscore
                     del tempscore
-                    y =- 1
-            sbmtbtn.configure(command = window.destroy)
-            
+                    defeated -= 1
+                    encntr2.configure(text = monsterencounterlist)
+            else:
+                tempscore = monsterencounterlist.pop(entrybox2.get())
+                if tempscore > 0:
+                    mnstscore = mnstscore + tempscore
+                    del tempscore
+                    defeated -= 1
+                    encntr2.configure(text = monsterencounterlist)
+                window2.destroy()
+                window1.destroy()
         #Row 3 End Encount & Submit
-        extbtn = tkinter.Button(window, text = "End", command = exit).grid (column = 1, row = 3)
-        sbmtbtn = tkinter.Button(window, text = "Submit", command = lambda idx = x: submit(x))
-        sbmtbtn.grid (column = 5, row = 3)
-        window.mainloop() #Calls Main GUI
-    dft_Count()
-def end_Encounter(pnts, rnd):
-    print (pnts, rnd)
-
-door_Difficulty()
-while roundcount < 51:
-    if roundcount%5 == 0:
-        defeated_Enemies()
-        round_Counter(roundcount)
-        roundcount += 1
-    else:
-        round_Counter(roundcount)
-        roundcount += 1
+        extbtn2 = tkinter.Button(window2, text = "End", command = window2.destroy).grid (column = 1, row = 3)
+        sbmtbtn2 = tkinter.Button(window2, text = "Submit", command = submit2)
+        sbmtbtn2.grid (column = 5, row = 3)
+        window2.mainloop() #Calls Main GUI
+    sbmtbtn1 = tkinter.Button(window1, text = "Submit", command = submit1).grid (column = 5, row = 3)
+    window1.mainloop() #Calls Main GUI
+#When hit round 50 with surviving monsters and players
+def encounter_End(rnd):
+    global finalscore, bnsscore, mnstscore, rndscore
+    rndscore = 3
+    finalscore = bnsscore + mnstscore + rndscore
+    print ("Team Bonus Score:", bnsscore)
+    print ("Team Monster Score:", mnstscore)
+    print ("Team Round Score:", rndscore)
+    print ("Team Final Score:", finalscore)
+#When hit round 1-50 and the battle ends
+def end_Encounter(rnd):
+    global finalscore, bnsscore, mnstscore, rndscore, roundcount, defeated, monsterencounterlist
+    if (rnd == 1 or rnd <= 5):
+        rndscore = 10
+        while len(monsterencounterlist) > 0:
+            tempscore = monsterencounterlist.popitem()
+            mnstscore = mnstscore + tempscore[1]
+    elif (rnd > 5 and rnd <= 25):
+        rndscore = ((25 - rnd) / 10) + 8
+        while len(monsterencounterlist) > 0:
+            tempscore = monsterencounterlist.popitem()
+            mnstscore = mnstscore + tempscore[1]
+    elif (rnd > 25 and rnd < 50):
+        rndscore = (((50 - rnd) * 2) / 10) + 3
+        while len(monsterencounterlist) > 0:
+            tempscore = monsterencounterlist.popitem()
+            mnstscore = mnstscore + tempscore[1]
+    finalscore = mnstscore + rndscore + bnsscore
+    print ("Team Bonus Score:", bnsscore)
+    print ("Team Monster Score:", mnstscore)
+    print ("Team Round Score:", rndscore)
+    print ("Team Final Score:", finalscore)
+    roundcount = 51
+def main():
+    global roundcount
+    door_Difficulty()
+    while roundcount < 51:
+        if roundcount%5 == 0:
+            defeated_Enemies()
+            round_Counter(roundcount)
+            roundcount += 1
+        else:
+            round_Counter(roundcount)
+            roundcount += 1

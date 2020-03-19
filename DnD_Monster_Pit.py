@@ -1,1 +1,3 @@
-print("Hello, World!")
+from RandomizingDoors import main
+
+main()
